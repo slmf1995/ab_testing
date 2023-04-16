@@ -75,16 +75,15 @@ def explain_prob_B_higher(df: pd.DataFrame, i: int) -> None:
     D = avg_B - avg_A
     prob_B_higher = df['prob_B_higher'][i]
 
-    print('Variant A performed avg_A = ' +
-          '{:.4f}'.format(avg_A) + ', std_A = ' + '{:.4f}'.format(std_A) + ' vs avg_B = ' +
-          '{:.4f}'.format(avg_B) + ', std_B = ' + '{:.4f}'.format(std_B) + '.')
+    print('Variant A performed avg_A = ' + '{:.4f}'.format(avg_A) + ', std_A = ' + '{:.4f}'.format(std_A)
+          + ' vs avg_B = ' + '{:.4f}'.format(avg_B) + ', std_B = ' + '{:.4f}'.format(std_B) + '.')
     if df['avg_B'][i] > df['avg_A'][i]:
         print('avg_B is +' + '{:.4f}'.format(D) + ' higher than avg_A.')
-        print('You can be ' + '{:.0%}'.format(prob_B_higher) +
-              ' confident that this is a result of the changes you made and not a result of random chance.')
+        print('You can be ' + '{:.0%}'.format(prob_B_higher)
+              + ' confident that this is a result of the changes you made and not a result of random chance.')
     elif df['avg_B'][i] < df['avg_A'][i]:
         print('avg_B is -' + '{:.4f}'.format(-D) + ' lower than avg_A.')
-        print('You can be ' + '{:.0%}'.format(1 - prob_B_higher) +
-              ' confident that this is a result of the changes you made and not a result of random chance.')
+        print('You can be ' + '{:.0%}'.format(1 - prob_B_higher)
+              + ' confident that this is a result of the changes you made and not a result of random chance.')
     else:
         print('There is no statistical difference between variants A and B.')

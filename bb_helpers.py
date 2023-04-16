@@ -77,15 +77,15 @@ def explain_prob_B_higher(df: pd.DataFrame, i: int) -> None:
     Dpp = (p_B - p_A) * 100
     prob_B_higher = df['prob_B_higher'][i]
 
-    print('Variant A performed p_A = ' +
-          '{:.2%}'.format(p_A) + ' while p_B = ' + '{:.2%}'.format(p_B) + '.')
+    print('Variant A performed p_A = ' + '{:.2%}'.format(p_A)
+          + ' while p_B = ' + '{:.2%}'.format(p_B) + '.')
     if df['p_B'][i] > df['p_A'][i]:
         print('p_B is +' + '{:.2}'.format(Dpp) + 'pp higher than p_A.')
-        print('You can be ' + '{:.0%}'.format(prob_B_higher) +
-              ' confident that this is a result of the changes you made and not a result of random chance.')
+        print('You can be ' + '{:.0%}'.format(prob_B_higher)
+              + ' confident that this is a result of the changes you made and not a result of random chance.')
     elif df['p_B'][i] < df['p_A'][i]:
         print('p_B is -' + '{:.2}'.format(-Dpp) + 'pp lower than p_A.')
-        print('You can be ' + '{:.0%}'.format(1 - prob_B_higher) +
-              ' confident that this is a result of the changes you made and not a result of random chance.')
+        print('You can be ' + '{:.0%}'.format(1 - prob_B_higher)
+              + ' confident that this is a result of the changes you made and not a result of random chance.')
     else:
         print('There is no statistical difference between variants A and B.')
