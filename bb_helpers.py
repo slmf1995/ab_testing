@@ -1,10 +1,12 @@
 import numpy as np
 import pandas as pd
-from scipy.stats import beta, norm
+from scipy.stats import beta, norm, rv_continuous
 import matplotlib.pyplot as plt
 
 
-def update_beta_prior(trials: int, success: int, alpha0: float, beta0: float) -> tuple[float, float]:
+def update_beta_prior(
+    trials: int, success: int, alpha0: float, beta0: float
+) -> tuple[float, float]:
     """
     Updates the prior beta distribution parameters, alpha and beta, based on the number of trials and successes.
 
@@ -22,7 +24,9 @@ def update_beta_prior(trials: int, success: int, alpha0: float, beta0: float) ->
     return alpha1, beta1
 
 
-def dbeta_B_minus_A(alpha_a: float, beta_a: float, alpha_b: float, beta_b: float) -> norm:
+def dbeta_B_minus_A(
+    alpha_a: float, beta_a: float, alpha_b: float, beta_b: float
+) -> rv_continuous:
     """
     Calculates the difference between two beta distributions, B and A, and returns a normal distribution.
 
@@ -40,8 +44,7 @@ def dbeta_B_minus_A(alpha_a: float, beta_a: float, alpha_b: float, beta_b: float
     beta_var_a = beta.var(alpha_a, beta_a)
     beta_var_b = beta.var(alpha_b, beta_b)
 
-    dbeta = norm(loc=beta_mean_b - beta_mean_a,
-                 scale=np.sqrt(beta_var_a + beta_var_b))
+    dbeta = norm(loc=beta_mean_b - beta_mean_a, scale=np.sqrt(beta_var_a + beta_var_b))
     return dbeta
 
 
@@ -58,34 +61,45 @@ def explain_prob_B_higher(df: pd.DataFrame, i: int) -> None:
     Returns:
         None. The function only produces a plot and prints a summary.
     """
-    mu = df['dbeta'][i].mean()
-    sigma = df['dbeta'][i].std()
+    mu = df["dbeta"][i].mean()
+    sigma = df["dbeta"][i].std()
 
     x_axis = np.linspace(mu - 3 * sigma, mu + 3 * sigma, 100)
-    y_axis = df['dbeta'][i].pdf(x_axis)
+    y_axis = df["dbeta"][i].pdf(x_axis)
 
-    plt.title(df['metric'][i])
-    plt.xlabel('p_B - p_A')
-    plt.ylabel('Probability density')
-    plt.plot(x_axis, y_axis, color='blue')
-    plt.fill_between(x_axis, y_axis, color='blue', alpha=.1)
-    plt.axvline(x=0, color='red', linestyle='--')
+    plt.title(df["metric"][i])
+    plt.xlabel("p_B - p_A")
+    plt.ylabel("Probability density")
+    plt.plot(x_axis, y_axis, color="blue")
+    plt.fill_between(x_axis, y_axis, color="blue", alpha=0.1)
+    plt.axvline(x=0, color="red", linestyle="--")
     plt.show()
 
-    p_A = df['p_A'][i]
-    p_B = df['p_B'][i]
+    p_A = df["p_A"][i]
+    p_B = df["p_B"][i]
     Dpp = (p_B - p_A) * 100
-    prob_B_higher = df['prob_B_higher'][i]
+    prob_B_higher = df["prob_B_higher"][i]
 
-    print('Variant A performed p_A = ' + '{:.2%}'.format(p_A)
-          + ' while p_B = ' + '{:.2%}'.format(p_B) + '.')
-    if df['p_B'][i] > df['p_A'][i]:
-        print('p_B is +' + '{:.2}'.format(Dpp) + 'pp higher than p_A.')
-        print('You can be ' + '{:.0%}'.format(prob_B_higher)
-              + ' confident that this is a result of the changes you made and not a result of random chance.')
-    elif df['p_B'][i] < df['p_A'][i]:
-        print('p_B is -' + '{:.2}'.format(-Dpp) + 'pp lower than p_A.')
-        print('You can be ' + '{:.0%}'.format(1 - prob_B_higher)
-              + ' confident that this is a result of the changes you made and not a result of random chance.')
+    print(
+        "Variant A performed p_A = "
+        + "{:.2%}".format(p_A)
+        + " while p_B = "
+        + "{:.2%}".format(p_B)
+        + "."
+    )
+    if df["p_B"][i] > df["p_A"][i]:
+        print("p_B is +" + "{:.2}".format(Dpp) + "pp higher than p_A.")
+        print(
+            "You can be "
+            + "{:.0%}".format(prob_B_higher)
+            + " confident that this is a result of the changes you made and not a result of random chance."
+        )
+    elif df["p_B"][i] < df["p_A"][i]:
+        print("p_B is -" + "{:.2}".format(-Dpp) + "pp lower than p_A.")
+        print(
+            "You can be "
+            + "{:.0%}".format(1 - prob_B_higher)
+            + " confident that this is a result of the changes you made and not a result of random chance."
+        )
     else:
-        print('There is no statistical difference between variants A and B.')
+        print("There is no statistical difference between variants A and B.")
